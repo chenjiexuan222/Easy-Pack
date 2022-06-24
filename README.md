@@ -1,2 +1,2 @@
-# Easy-Pack
-rapid synthesis and detection of bifunctional molecules
+# protacSyn
+protac automate synthesis
