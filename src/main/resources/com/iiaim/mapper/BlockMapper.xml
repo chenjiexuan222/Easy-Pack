@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iiaim.mapper.BlockMapper">
+    <!--add block-->
+    <insert id="addBlock">
+        insert into block(blockName,blockConc,blockVolume,axisX,axisY,remark)
+        value(#{blockName},#{blockConc},#{blockVolume},#{axisX},#{axisY},#{remark});
+    </insert>
+
+    <!--update the block data-->
+    <update id="updateBlock">
+        update block
+            <set>
+                <if test="blockName != null">
+                    blockName = #{blockName},
+                </if>
+                <if test="blockConc != null">
+                    blockConc = #{blockConc},
+                </if>
+                <if test="blockVolume != null">
+                    blockVolume = #{blockVolume},
+                </if>
+                <if test="axisX != null">
+                    axisX = #{axisX},
+                </if>
+                <if test="axisY != null">
+                    axisY = #{axisY},
+                </if>
+                <if test="remark != null">
+                    remark = #{remark}
+                </if>
+            </set>
+            where id = #{id};
+    </update>
+
+    <!--delete in batch-->
+    <delete id="deleteBlocksByIds">
+        DELETE FROM block WHERE id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--query data from block under some limitations-->
+    <select id="selectBlocks" resultType="com.iiaim.pojo.Block">
+        select * from block
+        <where>
+            <if test="blockName != null and blockName != ''">
+                blockName LIKE CONCAT('%',#{blockName},'%')
+            </if>
+            <if test="remark != null and remark!= ''">
+                and remark LIKE CONCAT('%',#{remark},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getCoordinate" resultType="com.iiaim.pojo.Block">
+        select * from block where blockName = #{blockName};
+    </select>
+
+    <select id="selectByPage" resultType="com.iiaim.pojo.Block">
+        select * from block limit #{begin},#{size};
+    </select>
+
+    <select id="verify" resultType="com.iiaim.pojo.Block">
+        select * from block where axisX = #{axisX} and axisY = #{axisY};
+    </select>
+</mapper>

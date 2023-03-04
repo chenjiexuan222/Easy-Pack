@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Click-Protac</title>
+    <style>
+        .el-header {
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+    </style>
+</head>
+
+<body>
+<meta charset="UTF-8">
+<div id="app">
+    <el-container>
+        <el-header>IIAIM AutoSyn platform</el-header>
+        <el-container>
+            <el-aside width="200px" style="background-color: rgb(238, 241, 246);text-align:left;line-height: 500px">
+                <el-menu :default-active="path" router>
+                    <el-menu-item index="/block" route = "/block">
+                        <i class="el-icon-coin"></i>
+                        <span slot="title">反应基元库</span>
+                    </el-menu-item>
+
+                    <el-submenu index="2">
+                        <template slot="title"><i class="el-icon-edit-outline"></i>新建反应任务</template>
+                        <el-menu-item-group>
+                            <el-menu-item index="3-1"><i class="el-icon-edit"></i>反应筛选迭代</el-menu-item>
+                            <el-menu-item index="3-2"><i class="el-icon-edit"></i>正交反应</el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+
+                    <el-menu-item index="3">
+                        <i class="el-icon-data-line"></i>
+                        <span slot="title">结果监测</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="4">
+                        <i class="el-icon-video-camera"></i>
+                        <span slot="title">实时画面展示</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="5">
+                        <i class="el-icon-document"></i>
+                        <span slot="title">反应信息</span>
+                    </el-menu-item>
+
+                </el-menu>
+            </el-aside>
+
+            <el-main>
+                <el-row>
+                    <el-col :span="15">main1<div class="grid-content bg-purple"></div></el-col>
+                    <el-col :span="9">main2<div class="grid-content bg-purple-light"></div></el-col>
+                </el-row>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script src="js/vue.js"></script>
+<script src="js/axios.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"></body>
+
+<script>
+new Vue({
+    el:"#app",
+    data() {
+        return {
+            path:"/block",
+        }
+    },
+    methods: {
+        onRouteChanged () {
+            let that = this
+            that.path  = that.$route.path
+        },
+        //查询所有
+        selectAll(){
+            var _this = this;
+            axios.get("http://localhost:8080/mavenWeb_demo2/brand/selectAll")
+                .then(function (resp){
+                    _this.tableData = resp.data;
+                })
+        },
+        tableRowClassName({row, rowIndex}) {
+            if (rowIndex === 1) {
+                return 'warning-row';
+            } else if (rowIndex === 3) {
+                return 'success-row';
+            }
+            return '';
+        },
+        //动态查询数据
+        onSubmit() {
+            console.log(this.brand);
+            //异步请求查询数据
+        },
+        //品牌新增添加
+        addBrand() {
+            var _this = this;
+            //console.log(this.brand);
+            //异步请求添加新增数据
+            axios.post("http://localhost:8080/mavenWeb_demo2/brand/addBrand",_this.brand)
+                .then(function (resp){
+                    if (resp.data == "success"){
+                        _this.dialogVisible = false;
+                        _this.selectAll();
+                        _this.$message({
+                            message: '恭喜你，添加成功',
+                            type: 'success'
+                        });
+                    }else {
+                        alert("fail")
+                    }
+                })
+        },
+        //批量删除数据
+        deleteBrands() {
+            var _this = this;
+            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                for (let i = 0; i < this.multipleSelection.length; i++) {
+                    this.selectedIds[i] = this.multipleSelection[i].id;
+                }
+                //异步请求删除数据
+                axios.post("http://localhost:8080/mavenWeb_demo2/brand/deleteBrands",_this.selectedIds)
+                    .then(function (resp){
+                        if (resp.data == "success"){
+                            _this.selectAll();
+                            _this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                        }else {
+                            alert("fail")
+                        }
+                    })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            })
+        },
+        //分页处理页码
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
+        },
+        //分页处理当前页变动
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+        },
+        //复选框动作
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+        }
+    },
+    watch: {
+        // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
+        '$route': 'onRouteChanged'
+    }
+})
+</script>
+</html>

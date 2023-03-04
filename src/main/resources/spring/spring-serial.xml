@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- service scanning -->
+    <context:component-scan base-package="com.iiaim.serial" />
+
+    <bean id="liquidDis" class="com.iiaim.serial.LiquidDispense">
+        <constructor-arg name="name" value="liquidDispense"/>
+        <constructor-arg name="port" value="COM4"/>
+    </bean>
+
+    <bean id="sixPortValve" class="com.iiaim.serial.SixPortValve">
+        <constructor-arg name="portname" value="COM3"/>
+    </bean>
+
+    <bean id="hplcValve" class="com.iiaim.serial.HplcValve">
+        <constructor-arg name="portname" value="COM6"/>
+    </bean>
+
+    <!--serial connector COM4-->
+    <bean id="heatStirrer" class="com.iiaim.serial.HeatStirrer">
+        <constructor-arg  name="portname" value="COM11"/>
+    </bean>
+
+    <bean id="read" class="java.net.Socket">
+        <constructor-arg name="host" value="192.168.30.121"/>
+        <constructor-arg name="port" value="2001"/>
+    </bean>
+
+    <bean id="write" class="java.net.Socket">
+        <constructor-arg name="host" value="192.168.30.121"/>
+        <constructor-arg name="port" value="2000"/>
+    </bean>
+
+    <bean id="modbusFac" class="com.serotonin.modbus4j.ModbusFactory"/>
+
+    <bean id="ipParameter" class="com.serotonin.modbus4j.ip.IpParameters">
+        <property name="host" value="192.168.30.69"/>
+        <property name="port" value="502"/>
+    </bean>
+
+    <bean id="tcpMaster" class="com.serotonin.modbus4j.ip.tcp.TcpMaster">
+        <constructor-arg name="params" ref="ipParameter"/>
+        <constructor-arg name="keepAlive" value="true"/>
+    </bean>
+</beans>
