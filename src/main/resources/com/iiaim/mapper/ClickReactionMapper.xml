@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iiaim.mapper.ClickReactionMapper">
+    <!--add reaction-->
+    <insert id="addReaction">
+        insert into reaction(batchSize, substrateA, subAEq, subAN, substrateB, subBEq, buffer, bufferVolume, cat, catEq, reactTime, reactTemp, remark)
+        VALUES(#{batchSize},#{substrateA},#{subAEq},#{subAN},#{substrateB},#{subBEq},#{buffer},#{bufferVolume},#{cat},#{catEq},#{reactTime},#{reactTemp},#{remark});
+    </insert>
+
+    <!--query data from reaction DB with some limitations-->
+    <!--query reaction data by page size and some restricted conditions-->
+    <select id="selectReaction" resultType="com.iiaim.pojo.ClickReaction">
+        select * from reaction
+        <where>
+            <if test="batchSize != null and batchSize != ''">
+                batchSize LIKE CONCAT('%',#{batchSize},'%')
+            </if>
+            <if test="substrateA != null and substrateA != ''">
+                and substrateA LIKE CONCAT('%',#{substrateA},'%')
+            </if>
+            <if test="buffer != null and buffer != ''">
+                and buffer LIKE CONCAT('%',#{buffer},'%')
+            </if>
+            <if test="cat != null and cat != ''">
+                and cat LIKE CONCAT('%',#{cat},'%')
+            </if>
+            <if test="reactTime != null and reactTime != '0'.toString()">
+                and reactTime = #{reactTime}
+            </if>
+            <if test="reactTemp != null and reactTemp != '0'.toString()">
+                and reactTemp = #{reactTemp}
+            </if>
+        </where>
+    </select>
+
+    <!--query reaction data by page size -->
+    <select id="allReaction" resultType="com.iiaim.pojo.ClickReaction">
+        select * from reaction limit #{begin},#{size};
+    </select>
+<!--    #         select * from-->
+
+    <!--    #             as a limit #{begin},#{size};/-->
+    <!--            <if test="reactTime != null or reactTime != '0'.toString() ">-->
+    <!--                and reactTime = #{reactTime}-->
+    <!--            </if>-->
+    <!--            <if test="reactTemp != null or reactTemp != '0'.toString() ">/*加上toString进行判断，说明mybatis并没有将double类型的数据转为整型数据*/-->
+    <!--                and reactTemp = #{reactTemp}-->
+    <!--            </if>-->
+</mapper>

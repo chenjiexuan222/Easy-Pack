@@ -1,2 +1,0 @@
-# protacSyn
-protac automate synthesis

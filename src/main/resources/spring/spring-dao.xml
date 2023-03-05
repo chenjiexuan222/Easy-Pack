@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 1. linked to DB properties file -->
+    <context:property-placeholder location="classpath:database.properties"/>
+    <!-- 2.DB dataSource -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- configure properties -->
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- c3p0 datasource personal properties -->
+        <property name="maxPoolSize" value="30"/>
+        <property name="minPoolSize" value="10"/>
+        <!-- no auto-committing when close -->
+        <property name="autoCommitOnClose" value="false"/>
+        <!-- get linked overtime -->
+        <property name="checkoutTimeout" value="10000"/>
+        <!-- get linked failed number -->
+        <property name="acquireRetryAttempts" value="2"/>
+    </bean>
+
+    <!-- 3.SqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- set DB dataSource -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- set MyBaties configuration file:mybatis-config.xml -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- PageHelper page plugin  -->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageHelper">
+                    <property name="properties">
+                        <value>dialect=mysql</value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- 4.Dao/mapper scanning -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- set sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!-- set mapper path -->
+        <property name="basePackage" value="com.iiaim.mapper"/>
+    </bean>
+</beans>

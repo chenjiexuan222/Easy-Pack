@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+    <appenders>
+        <!--输出控制台的配置 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--输出日志的格式 -->
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+        <!--append属性true：表示消息追加到文件中；false：消息覆盖，默认值是true -->
+        <File name="debug" fileName="D:/JAVA/click/logs/debug.log">
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="Info" fileName="D:/JAVA/click/logs/info.log" append="false">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="Warn" fileName="D:/JAVA/click/logs/warn.log">
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="ERROR" fileName="D:/JAVA/click/logs/error.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+    </appenders>
+
+    <Loggers>
+        <loggers>
+            <root level="debug">
+                <appender-ref ref="Console"/>
+                <appender-ref ref="debug" />
+                <appender-ref ref="ERROR" />
+                <appender-ref ref="Warn"/>
+                <appender-ref ref="Info"/>
+            </root>
+        </loggers>
+    </Loggers>
+</Configuration>
